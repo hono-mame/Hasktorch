@@ -17,10 +17,10 @@
 ---
 
 ### Definition of regression
-simple linear regression (単回帰)
+simple linear regression (単回帰)  
 $$y= a_0+a_1x_1+ a_2x_2….$$ 
 
-multiple linear regression (重回帰)
+multiple linear regression (重回帰)   
 $$y= a_0+a_1x_1+ a_2x_2….$$
 
 
