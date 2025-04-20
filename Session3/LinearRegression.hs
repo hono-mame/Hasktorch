@@ -1,5 +1,6 @@
 import Torch.Tensor (Tensor, asTensor, asValue)
-import Torch.Functional (matmul, mul, add, transpose2D)
+import Torch.Functional (matmul, mul, add, sub, transpose2D)
+import Torch.Functional.Internal (meanAll, powScalar)
 
 
 ys :: Tensor
@@ -12,6 +13,18 @@ linear ::
     Tensor ->           -- ^ data x: 1 × 10
     Tensor              -- ^ z: 1 × 10
 linear (slope, intercept) input = add (mul input slope) intercept
+
+cost ::
+    Tensor -> -- ^ grand truth: 1 × 10
+    Tensor -> -- ^ estimated values: 1 × 10
+    Tensor    -- ^ loss: scalar
+cost z z' = 
+    let diffs = sub z z'
+        squarediffs = mul diffs diffs
+        squarediffsList = asValue squarediffs :: [Float]
+        answer = (sum squarediffsList) / fromIntegral (length squarediffsList)
+        answerT = asTensor answer
+  in answerT
 
 main :: IO ()
 main = do
@@ -29,3 +42,7 @@ main = do
     show y ++ "\nestimated: " ++ 
     show e ++ "\n*******")
     (zip ysList estimatedYList)
+
+  let costTensor = cost estimatedY ys
+  let costValue = asValue costTensor :: Float
+  putStrLn $ "cost is: " ++ show costValue

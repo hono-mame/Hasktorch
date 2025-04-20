@@ -88,3 +88,24 @@ main = do
     show e ++ "\n*******")
     (zip ysList estimatedYList)
 ```
+
+
+### 3.d: define a cost function
+```
+cost is: 1117.397
+```
+
+```
+cost ::
+    Tensor -> -- ^ grand truth: 1 × 10
+    Tensor -> -- ^ estimated values: 1 × 10
+    Tensor    -- ^ loss: scalar
+cost z z' = 
+    let diffs = sub z z'
+        squarediffs = mul diffs diffs
+        squarediffsList = asValue squarediffs :: [Float]
+        answer = (sum squarediffsList) / fromIntegral (length squarediffsList)
+        answerT = asTensor answer
+  in answerT
+```
+Listを経由せずTensorのみで計算したい、、
