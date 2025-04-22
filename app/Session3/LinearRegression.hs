@@ -26,22 +26,26 @@ cost z z' =
         answerT = asTensor answer
   in answerT
 
+printOutput :: 
+    Tensor ->
+    IO ()
+printOutput estimatedY =
+    let ysList = asValue ys :: [Float]
+        estimatedYList = asValue estimatedY :: [Float]
+  in mapM_ (\(y, e) -> 
+      putStrLn $ "correct answer: " ++ 
+      show y ++ "\nestimated: " ++ 
+      show e ++ "\n*******")
+      (zip ysList estimatedYList)
+
 main :: IO ()
 main = do
   let sampleA = asTensor ([0.555] :: [Float])
   let sampleB = asTensor ([94.585026] :: [Float])
-
   let estimatedY = linear (sampleA, sampleB) xs
 
-  let ysList = asValue ys :: [Float]  -- convert Tensor to [Float]
-  let estimatedYList = asValue estimatedY :: [Float]  -- convert Tensor to [Float]
-
   -- output
-  mapM_ (\(y, e) -> 
-    putStrLn $ "correct answer: " ++ 
-    show y ++ "\nestimated: " ++ 
-    show e ++ "\n*******")
-    (zip ysList estimatedYList)
+  printOutput(estimatedY)
 
   let costTensor = cost estimatedY ys
   let costValue = asValue costTensor :: Float
