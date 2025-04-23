@@ -240,3 +240,127 @@ Final coefficient A: [7.6494e-3]
 Final coefficient B: [-9.234278e-2]
 ---------------------------------------
 ```
+
+### 5.g check the model behavior
+```
+correct answer: 0.75
+estimated: 0.7184936
+*******
+correct answer: 0.73
+estimated: 0.7031948
+*******
+correct answer: 0.72
+estimated: 0.726143
+*******
+correct answer: 0.62
+estimated: 0.687896
+*******
+correct answer: 0.67
+estimated: 0.7031948
+*******
+correct answer: 0.81
+estimated: 0.79498756
+*******
+correct answer: 0.63
+estimated: 0.67259717
+*******
+correct answer: 0.69
+estimated: 0.6802466
+*******
+correct answer: 0.8
+estimated: 0.76439
+*******
+correct answer: 0.43
+estimated: 0.6419996
+*******
+correct answer: 0.8
+estimated: 0.7720394
+*******
+correct answer: 0.73
+estimated: 0.71084416
+*******
+correct answer: 0.75
+estimated: 0.7184936
+*******
+correct answer: 0.71
+estimated: 0.73379236
+*******
+correct answer: 0.73
+estimated: 0.726143
+*******
+correct answer: 0.83
+estimated: 0.75674057
+*******
+correct answer: 0.72
+estimated: 0.7490912
+*******
+correct answer: 0.94
+estimated: 0.8102864
+*******
+correct answer: 0.81
+estimated: 0.73379236
+*******
+correct answer: 0.81
+estimated: 0.726143
+*******
+correct answer: 0.75
+estimated: 0.726143
+*******
+correct answer: 0.79
+estimated: 0.7490912
+*******
+correct answer: 0.58
+estimated: 0.7184936
+*******
+correct answer: 0.59
+estimated: 0.6955454
+*******
+correct answer: 0.47
+estimated: 0.6419996
+*******
+correct answer: 0.49
+estimated: 0.6572984
+*******
+correct answer: 0.47
+estimated: 0.64964896
+*******
+correct answer: 0.42
+estimated: 0.62670076
+*******
+correct answer: 0.57
+estimated: 0.6649478
+*******
+correct answer: 0.62
+estimated: 0.6802466
+*******
+correct answer: 0.74
+estimated: 0.726143
+*******
+correct answer: 0.73
+estimated: 0.7490912
+*******
+correct answer: 0.64
+estimated: 0.67259717
+*******
+correct answer: 0.63
+estimated: 0.687896
+*******
+correct answer: 0.59
+estimated: 0.6572984
+*******
+correct answer: 0.73
+estimated: 0.7184936
+*******
+correct answer: 0.79
+estimated: 0.7414418
+*******
+correct answer: 0.68
+estimated: 0.7031948
+*******
+correct answer: 0.7
+estimated: 0.71084416
+*******
+correct answer: 0.81
+estimated: 0.726143
+*******
+```

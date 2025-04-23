@@ -121,3 +121,7 @@ main = do
   putStrLn $ "Final coefficient A: " ++ show (asValue finalA :: [Float])
   putStrLn $ "Final coefficient B: " ++ show (asValue finalB :: [Float])
   putStrLn "---------------------------------------"
+
+  (xEval, yEval) <- loadXY "app/Session3/data/eval.csv"
+  let predEvalY = linear (finalA, finalB) xEval
+  printOutput predEvalY yEval
