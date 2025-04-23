@@ -1,5 +1,5 @@
 import Torch.Tensor (Tensor, asTensor, asValue)
-import Torch.Functional (matmul, mul, add, sub, transpose2D)
+import Torch.Functional (matmul, mul, add, sub, transpose2D, sumAll)
 import Torch.Functional.Internal (meanAll, powScalar)
 
 
@@ -38,15 +38,50 @@ printOutput estimatedY =
       show e ++ "\n*******")
       (zip ysList estimatedYList)
 
+calculateNewA ::
+     Tensor ->
+     Tensor ->
+     Tensor
+calculateNewA  estY oldA =
+    let diff  = estY - ys
+        diff2 = (sumAll $ (mul xs diff)) / 15
+  in oldA - diff2 * 2e-5
+
+calculateNewB ::
+     Tensor ->
+     Tensor ->
+     Tensor
+calculateNewB estY oldB =
+    let diff = estY - ys
+        total = sumAll diff / 15
+  in oldB - total * 2e-5
+
+train :: Int -> (Tensor, Tensor) -> IO (Tensor, Tensor)
+train 0 params = return params
+train n (a, b) = do
+  let estY = linear (a, b) xs
+      loss = asValue (cost estY ys) :: Float
+  putStrLn $ "Epoch " ++ show (10 - n) ++ ": Loss = " ++ show loss  -- need to change this too if you change the number of epoch
+  let newA = calculateNewA estY a
+      newB = calculateNewB estY b
+      newAvalue = asValue newA :: Float
+      newBvalue = asValue newB :: Float
+  putStrLn $ "A: " ++ show newAvalue ++ "B: " ++ show newBvalue
+  putStrLn "******************"
+  train (n - 1) (newA, newB)
+  
 main :: IO ()
 main = do
-  let sampleA = asTensor ([0.555] :: [Float])
-  let sampleB = asTensor ([94.585026] :: [Float])
-  let estimatedY = linear (sampleA, sampleB) xs
-
-  -- output
-  printOutput(estimatedY)
-
-  let costTensor = cost estimatedY ys
-  let costValue = asValue costTensor :: Float
-  putStrLn $ "cost is: " ++ show costValue
+  let initialA = asTensor ([5.0] :: [Float])
+  let initialB = asTensor ([100.0] :: [Float])
+  let epoch = 10  -- do not forget to change the number inside the function "train"
+  (finalA, finalB) <- train epoch (initialA, initialB)
+  let finalY = linear (finalA, finalB) xs
+  -- printOutput finalY
+  let finalLoss = asValue (cost finalY ys) :: Float
+  putStrLn "---------------------------------------"
+  putStrLn $ "Epoch: " ++ show epoch
+  putStrLn $ "Final cost: " ++ show finalLoss
+  putStrLn $ "Final coefficient A: " ++ show (asValue finalA :: [Float])
+  putStrLn $ "Final coefficient B: " ++ show (asValue finalB :: [Float])
+  putStrLn "---------------------------------------"

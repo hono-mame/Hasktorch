@@ -108,4 +108,84 @@ cost z z' =
         answerT = asTensor answer
   in answerT
 ```
-Listを経由せずTensorのみで計算したい、、
+**TODO: Implement this function without using Lists (if possible)**
+
+### 3.e 〜 3.f inplement the function for renewing coefficients and training
+
+```
+calculateNewA ::
+     Tensor ->
+     Tensor ->
+     Tensor
+calculateNewA  estY oldA =
+    let diff  = estY - ys
+        diff2 = (sumAll $ (mul xs diff)) / 15
+  in oldA - diff2 * 2e-5
+
+calculateNewB ::
+     Tensor ->
+     Tensor ->
+     Tensor
+calculateNewB estY oldB =
+    let diff = estY - ys
+        total = sumAll diff / 15
+  in oldB - total * 2e-5
+```
+
+I changed the number of arguments of each function...  
+
+**TODO: Improve functions so that learning rates are obtained from arguments rather than directly entered**
+
+### 3.g My model
+
+🌟results🌟  
+**α = 2.0e-5**
+```
+Epoch 0: Loss = 711041.6
+A: 1.8251736B: 99.983894
+******************
+Epoch 1: Loss = 60856.387
+A: 0.9042269B: 99.97922
+******************
+Epoch 2: Loss = 6146.4614
+A: 0.6370808B: 99.97785
+******************
+Epoch 3: Loss = 1542.8881
+A: 0.55958766B: 99.97745
+******************
+Epoch 4: Loss = 1155.5195
+A: 0.53710866B: 99.977325
+******************
+Epoch 5: Loss = 1122.9244
+A: 0.53058803B: 99.97728
+******************
+Epoch 6: Loss = 1120.1818
+A: 0.5286966B: 99.977264
+******************
+Epoch 7: Loss = 1119.9508
+A: 0.52814794B: 99.97725
+******************
+Epoch 8: Loss = 1119.9315
+A: 0.52798885B: 99.97724
+******************
+Epoch 9: Loss = 1119.9298
+A: 0.5279427B: 99.977234
+******************
+---------------------------------------
+Epoch: 10
+Final cost: 1119.9298
+Final coefficient A: [0.5279427]
+Final coefficient B: [99.977234]
+---------------------------------------
+```
+
+- **α (learning rate)**  
+I set this to **2.0e-5** because if α is larger than 1.0e-4, it becomes NaN.
+
+- **Epoch**  
+The value hardly changed after more than 10 repeated trials.
+(Is the epoch quite dependent on the learning rate?)
+
+- **initial value**
+The results are considerably influenced by the initial values.
+(Initial values need to be set appropriately???)
