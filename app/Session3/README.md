@@ -189,3 +189,54 @@ The value hardly changed after more than 10 repeated trials.
 - **initial value**
 The results are considerably influenced by the initial values.
 (Initial values need to be set appropriately???)
+
+
+
+--- 
+
+### 5.e Write a code to load data files
+https://qiita.com/TTsurutani/items/811814ebf548332ede8a
+https://hackage.haskell.org/package/cassava-0.5.3.0/docs/Data-Csv.html
+
+
+
+### 5.f My training results
+```
+Epoch 0: Loss = 1165944.8
+A: 7.666525 B: -2.1562912e-2
+******************
+Epoch 1: Loss = 684971.9
+A: 5.877977 B: -3.8090333e-2
+******************
+Epoch 2: Loss = 402408.72
+A: 4.5071015 B: -5.0758187e-2
+******************
+Epoch 3: Loss = 236407.9
+A: 3.4563615 B: -6.046778e-2
+******************
+Epoch 4: Loss = 138885.4
+A: 2.650997 B: -6.790995e-2
+******************
+Epoch 5: Loss = 81592.74
+A: 2.0337062 B: -7.361419e-2
+******************
+・
+・
+・
+******************
+Epoch 97: Loss = 1.1848296e-2
+A: 7.649398e-3 B: -9.2342645e-2
+******************
+Epoch 98: Loss = 1.1848294e-2
+A: 7.649399e-3 B: -9.234271e-2
+******************
+Epoch 99: Loss = 1.1848293e-2
+A: 7.6494e-3 B: -9.234278e-2
+******************
+---------------------------------------
+Epoch: 100
+Final cost: 1.1848291e-2
+Final coefficient A: [7.6494e-3]
+Final coefficient B: [-9.234278e-2]
+---------------------------------------
+```

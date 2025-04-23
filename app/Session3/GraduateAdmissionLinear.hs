@@ -1,4 +1,123 @@
-module Main (main) where
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
+
+import GHC.Generics (Generic)
+import qualified Data.ByteString.Lazy as BL
+import qualified Data.Vector as V
+import Data.Csv
+import Torch.Tensor (Tensor, asTensor, asValue)
+import Torch.Functional (matmul, mul, add, sub, transpose2D, sumAll)
+import Torch.Functional.Internal (meanAll, powScalar)
+
+-- structure of input CSV
+data Input = Row
+  { x :: !Float   -- row 1
+  , y :: !Float   -- row 2
+  } deriving (Show, Eq, Generic)
+
+instance FromRecord Input
+
+-- read CSV file and convert to Tensors
+loadXY :: FilePath -> IO (Tensor, Tensor)
+loadXY filePath = do
+  csvData <- BL.readFile filePath
+  case decode HasHeader csvData of  -- ヘッダーありCSVを読み込む
+    Right v -> do
+      let xsList = V.toList $ V.map x v  -- get x as a list
+          ysList = V.toList $ V.map y v  -- get y as a list
+          xs = asTensor xsList           
+          ys = asTensor ysList           
+      return (xs, ys)
+
+linear :: 
+    (Tensor, Tensor) -> -- ^ parameters ([a, b]: 1 × 2, c: scalar)
+    Tensor ->           -- ^ data x: 1 × 10
+    Tensor              -- ^ z: 1 × 10
+linear (slope, intercept) input = add (mul input slope) intercept
+
+cost ::
+    Tensor -> -- ^ grand truth: 1 × 10
+    Tensor -> -- ^ estimated values: 1 × 10
+    Tensor    -- ^ loss: scalar
+cost z z' = 
+    let diffs = sub z z'
+        squarediffs = mul diffs diffs
+        squarediffsList = asValue squarediffs :: [Float]
+        answer = (sum squarediffsList) / fromIntegral (length squarediffsList)
+        answerT = asTensor answer
+  in answerT
+
+printOutput :: 
+    Tensor ->
+    Tensor ->
+    IO ()
+printOutput estimatedY ys =
+    let ysList = asValue ys :: [Float]
+        estimatedYList = asValue estimatedY :: [Float]
+  in mapM_ (\(y, e) -> 
+      putStrLn $ "correct answer: " ++ 
+      show y ++ "\nestimated: " ++ 
+      show e ++ "\n*******")
+      (zip ysList estimatedYList)
+
+calculateNewA ::
+     Tensor -> -- xs
+     Tensor -> -- ys
+     Tensor -> -- estY
+     Tensor -> -- oldA
+     Tensor    -- newA
+calculateNewA xs ys estY oldA =
+    let diff  = estY - ys
+        diff2 = (sumAll $ (mul xs diff)) / 320
+  in oldA - diff2 * 2e-5
+
+calculateNewB ::
+     Tensor -> -- xs
+     Tensor -> -- ys
+     Tensor -> -- estY
+     Tensor -> -- oldB
+     Tensor    -- newB
+calculateNewB xs ys estY oldB =
+    let diff = estY - ys
+        total = sumAll diff / 320
+  in oldB - total * 2e-5
+
+train ::
+    Tensor -> -- xs
+    Tensor -> -- ys
+    Int ->    -- epoch
+    (Tensor, Tensor) -> IO (Tensor, Tensor)
+train xs ys 0 params = return params
+train xs ys n (a, b) = do
+  let estY = linear (a, b) xs
+      loss = asValue (cost estY ys) :: Float
+  putStrLn $ "Epoch " ++ show (100 - n) ++ ": Loss = " ++ show loss  -- need to change this too if you change the number of epoch
+  let newA = calculateNewA xs ys estY a
+      newB = calculateNewB xs ys estY b
+      newAvalue = asValue newA :: Float
+      newBvalue = asValue newB :: Float
+  putStrLn $ "A: " ++ show newAvalue ++ " B: " ++ show newBvalue
+  putStrLn "******************"
+  train xs ys (n - 1) (newA, newB)
+
 main :: IO ()
 main = do
-  print "----- execution check -----"
+  (xs, ys) <- loadXY "app/Session3/data/train.csv"
+  -- putStrLn "xs:"
+  -- print xs
+  -- putStrLn "ys:"
+  -- print ys
+
+  let initialA = asTensor ([10.0] :: [Float])
+  let initialB = asTensor ([0.0] :: [Float])
+  let epoch = 100  -- do not forget to change the number inside the function "train"
+  (finalA, finalB) <- train xs ys epoch (initialA, initialB)
+  let finalY = linear (finalA, finalB) xs
+  -- printOutput finalY ys
+  let finalLoss = asValue (cost finalY ys) :: Float
+  putStrLn "---------------------------------------"
+  putStrLn $ "Epoch: " ++ show epoch
+  putStrLn $ "Final cost: " ++ show finalLoss
+  putStrLn $ "Final coefficient A: " ++ show (asValue finalA :: [Float])
+  putStrLn $ "Final coefficient B: " ++ show (asValue finalB :: [Float])
+  putStrLn "---------------------------------------"

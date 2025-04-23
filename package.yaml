@@ -63,6 +63,9 @@ executables:
       - Hasktorch
       - hasktorch-tools
       - hasktorch == 0.2.0.0
+      - cassava
+      - bytestring
+      - vector
     other-modules: []
 
 tests:
