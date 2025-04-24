@@ -5,7 +5,14 @@ How to execute the LinearRegression projects:
 (if necessary)
 $ docker-compose up -d
 
+- for task3 - 
 $ docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack run session3-linear-regression"
+
+- for task4 - 
+ $ docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack run session3-multiple-regression"
+
+- for task5 -
+$ docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack run session3-graduate-admission-linear"
 ```
 
 ### 3.b: results of initial linear function
