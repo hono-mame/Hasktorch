@@ -66,6 +66,7 @@ executables:
       - cassava
       - bytestring
       - vector
+      - nlp-tools
     other-modules: []
 
 tests:

@@ -364,3 +364,16 @@ correct answer: 0.81
 estimated: 0.726143
 *******
 ```
+
+### 5.i Draw a learning curve 
+https://github.com/DaisukeBekki/nlp-tools/blob/master/src/ML/Exp/Chart.hs#L18
+```
+type LearningChart = (Name,[Loss]) --Name of an experiment and list of loss values
+
+drawLearningCurve ::
+  FilePath           -- ^ The filepath for the PNG file
+  -> String          -- ^ The caption of the PNG file
+  -> [LearningChart] -- ^ The list of data
+  -> IO()
+```
+does not work :(

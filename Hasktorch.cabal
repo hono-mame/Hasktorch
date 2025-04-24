@@ -49,6 +49,7 @@ executable session3-graduate-admission-linear
     , cassava
     , hasktorch ==0.2.0.0
     , hasktorch-tools
+    , nlp-tools
     , vector
   default-language: Haskell2010
 

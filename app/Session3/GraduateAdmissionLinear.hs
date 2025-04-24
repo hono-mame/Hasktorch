@@ -8,6 +8,7 @@ import Data.Csv
 import Torch.Tensor (Tensor, asTensor, asValue)
 import Torch.Functional (matmul, mul, add, sub, transpose2D, sumAll)
 import Torch.Functional.Internal (meanAll, powScalar)
+import ML.Exp.Chart (drawLearningCurve)
 
 -- structure of input CSV
 data Input = Row
@@ -86,19 +87,23 @@ train ::
     Tensor -> -- xs
     Tensor -> -- ys
     Int ->    -- epoch
-    (Tensor, Tensor) -> IO (Tensor, Tensor)
-train xs ys 0 params = return params
-train xs ys n (a, b) = do
+    (Tensor, Tensor) -> -- params (a, b)
+    [Tensor] ->         -- accumulated losses
+    IO ((Tensor, Tensor), [Tensor])
+train xs ys 0 params losses = return (params, reverse losses)
+train xs ys n (a, b) losses = do
   let estY = linear (a, b) xs
-      loss = asValue (cost estY ys) :: Float
-  putStrLn $ "Epoch " ++ show (100 - n) ++ ": Loss = " ++ show loss  -- need to change this too if you change the number of epoch
+      currLoss = cost estY ys
+      lossVal = asValue currLoss :: Float
+  putStrLn $ "Epoch " ++ show (100 - n) ++ ": Loss = " ++ show lossVal
   let newA = calculateNewA xs ys estY a
       newB = calculateNewB xs ys estY b
       newAvalue = asValue newA :: Float
       newBvalue = asValue newB :: Float
   putStrLn $ "A: " ++ show newAvalue ++ " B: " ++ show newBvalue
   putStrLn "******************"
-  train xs ys (n - 1) (newA, newB)
+  train xs ys (n - 1) (newA, newB) (currLoss : losses)
+
 
 main :: IO ()
 main = do
@@ -107,17 +112,16 @@ main = do
   -- print xs
   -- putStrLn "ys:"
   -- print ys
-
   let initialA = asTensor ([10.0] :: [Float])
   let initialB = asTensor ([0.0] :: [Float])
   let epoch = 100  -- do not forget to change the number inside the function "train"
-  (finalA, finalB) <- train xs ys epoch (initialA, initialB)
+  ((finalA, finalB), losses) <- train xs ys epoch (initialA, initialB) []
   let finalY = linear (finalA, finalB) xs
   -- printOutput finalY ys
   let finalLoss = asValue (cost finalY ys) :: Float
   putStrLn "---------------------------------------"
   putStrLn $ "Epoch: " ++ show epoch
-  putStrLn $ "Final cost: " ++ show finalLoss
+  putStrLn $ "Final cost: " ++ show (asValue (last losses) :: Float)
   putStrLn $ "Final coefficient A: " ++ show (asValue finalA :: [Float])
   putStrLn $ "Final coefficient B: " ++ show (asValue finalB :: [Float])
   putStrLn "---------------------------------------"
@@ -125,3 +129,10 @@ main = do
   (xEval, yEval) <- loadXY "app/Session3/data/eval.csv"
   let predEvalY = linear (finalA, finalB) xEval
   printOutput predEvalY yEval
+
+  -- Learning Curve 
+  let lossValues = map (\t -> asValue t :: Float) losses
+  putStrLn "Loss values:"
+  print lossValues
+  -- needs to be fixed (does not work)
+  drawLearningCurve "app/Session3/charts/GraduateAdmissionLearningCurve.png" "Learning Curve" [("Training Loss", lossValues)]
