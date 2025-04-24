@@ -104,6 +104,11 @@ main = do
   let finalLoss = asValue (cost finalY ys) :: Float
   putStrLn "---------------------------------------"
   putStrLn $ "Epoch: " ++ show epoch
+  putStrLn $ "Learning rate: " ++ show learningRate
+  putStrLn $ "Initial coefficient A1: " ++ show (asValue initialA1 :: [Float])
+  putStrLn $ "Initial coefficient A2: " ++ show (asValue initialA2 :: [Float])
+  putStrLn $ "Initial coefficient B: " ++ show (asValue initialB :: [Float])
+  putStrLn "---------------------------------------"
   putStrLn $ "Final cost: " ++ show (asValue (last losses) :: Float)
   putStrLn $ "Final coefficient A1: " ++ show (asValue finalA1 :: [Float])
   putStrLn $ "Final coefficient A2: " ++ show (asValue finalA2 :: [Float])

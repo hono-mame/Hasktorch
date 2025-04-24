@@ -193,6 +193,36 @@ The results are considerably influenced by the initial values.
 
 
 --- 
+### 4. Implement multiple linear regression
+```
+Epoch 0: Loss = 39637.0
+Epoch 10: Loss = 120.33748
+Epoch 20: Loss = 117.239075
+Epoch 30: Loss = 115.96401
+Epoch 40: Loss = 115.43909
+Epoch 50: Loss = 115.22306
+Epoch 60: Loss = 115.1342
+Epoch 70: Loss = 115.09749
+Epoch 80: Loss = 115.0824
+Epoch 90: Loss = 115.07623
+Epoch 100: Loss = 115.07363
+Epoch 110: Loss = 115.072716
+Epoch 120: Loss = 115.07219
+Epoch 130: Loss = 115.072105
+Epoch 140: Loss = 115.072044
+---------------------------------------
+Epoch: 150
+Learning rate: Tensor Float []  2.0000e-5
+Initial coefficient A1: [0.0]
+Initial coefficient A2: [0.0]
+Initial coefficient B: [0.0]
+---------------------------------------
+Final cost: 115.07192
+Final coefficient A1: [0.6057865]
+Final coefficient A2: [0.44173887]
+Final coefficient B: [2.7905963e-3]
+---------------------------------------
+```
 
 ### 5.e Write a code to load data files
 https://qiita.com/TTsurutani/items/811814ebf548332ede8a
