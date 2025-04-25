@@ -135,4 +135,4 @@ main = do
   putStrLn "Loss values:"
   print lossValues
   -- needs to be fixed (does not work)
-  drawLearningCurve "app/Session3/charts/GraduateAdmissionLearningCurve.png" "Learning Curve" [("Training Loss", lossValues)]
+  drawLearningCurve "app/Session3/charts/GraduateAdmissionLinearLearningCurve.png" "Learning Curve" [("Training Loss", lossValues)]

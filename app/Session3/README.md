@@ -416,3 +416,184 @@ drawLearningCurve ::
   -> IO()
 ```
 does not work :(
+
+### Predict chance of Admit in a different way
+→ used Sigmoid function (Logistic Regression)
+→ still trying improving...
+→ need more than two explanatory variables ???
+
+```
+******************
+Epoch 1: Loss = 6.6065215e-2
+A: 9.864577e-4 B: 8.903482e-6
+******************
+Epoch 2: Loss = 6.0519718e-2
+A: 1.4369776e-3 B: 1.2960561e-5
+******************
+Epoch 3: Loss = 5.5615228e-2
+A: 1.8613107e-3 B: 1.677565e-5
+******************
+Epoch 4: Loss = 5.1280845e-2
+A: 2.2610696e-3 B: 2.0363648e-5
+******************
+Epoch 5: Loss = 4.7451764e-2
+A: 2.6377814e-3 B: 2.373866e-5
+******************
+Epoch 6: Loss = 4.406961e-2
+A: 2.9928864e-3 B: 2.6913987e-5
+******************
+Epoch 7: Loss = 4.1082058e-2
+A: 3.3277383e-3 B: 2.9902138e-5
+・
+・
+・
+・
+******************
+Epoch 293: Loss = 1.7448392e-2
+A: 9.454793e-3 B: 5.562616e-5
+******************
+Epoch 294: Loss = 1.7448392e-2
+A: 9.454794e-3 B: 5.551794e-5
+******************
+Epoch 295: Loss = 1.7448392e-2
+A: 9.454795e-3 B: 5.540972e-5
+******************
+Epoch 296: Loss = 1.744839e-2
+A: 9.454796e-3 B: 5.53015e-5
+******************
+Epoch 297: Loss = 1.744839e-2
+A: 9.454798e-3 B: 5.5193283e-5
+******************
+Epoch 298: Loss = 1.7448388e-2
+A: 9.454799e-3 B: 5.5085064e-5
+******************
+Epoch 299: Loss = 1.7448388e-2
+A: 9.4548e-3 B: 5.4976845e-5
+******************
+---------------------------------------
+Epoch: 300
+Final cost: 1.7448388e-2
+Final coefficient A: [9.4548e-3]
+Final coefficient B: [5.4976845e-5]
+---------------------------------------
+correct answer: 0.75
+estimated: 0.7315034
+*******
+correct answer: 0.73
+estimated: 0.72777325
+*******
+correct answer: 0.72
+estimated: 0.73335636
+*******
+correct answer: 0.62
+estimated: 0.7240108
+*******
+correct answer: 0.67
+estimated: 0.72777325
+*******
+correct answer: 0.81
+estimated: 0.7496622
+*******
+correct answer: 0.63
+estimated: 0.72021633
+*******
+correct answer: 0.69
+estimated: 0.7221175
+*******
+correct answer: 0.8
+estimated: 0.7424979
+*******
+correct answer: 0.43
+estimated: 0.7125325
+*******
+correct answer: 0.8
+estimated: 0.74430156
+*******
+correct answer: 0.73
+estimated: 0.7296424
+*******
+correct answer: 0.75
+estimated: 0.7315034
+*******
+correct answer: 0.71
+estimated: 0.7352011
+*******
+correct answer: 0.73
+estimated: 0.73335636
+*******
+correct answer: 0.83
+estimated: 0.7406861
+*******
+correct answer: 0.72
+estimated: 0.738866
+*******
+correct answer: 0.94
+estimated: 0.7531942
+*******
+correct answer: 0.81
+estimated: 0.7352011
+*******
+correct answer: 0.81
+estimated: 0.73335636
+*******
+correct answer: 0.75
+estimated: 0.73335636
+*******
+correct answer: 0.79
+estimated: 0.738866
+*******
+correct answer: 0.58
+estimated: 0.7315034
+*******
+correct answer: 0.59
+estimated: 0.72589606
+*******
+correct answer: 0.47
+estimated: 0.7125325
+*******
+correct answer: 0.49
+estimated: 0.71639013
+*******
+correct answer: 0.47
+estimated: 0.71446526
+*******
+correct answer: 0.42
+estimated: 0.70864373
+*******
+correct answer: 0.57
+estimated: 0.71830714
+*******
+correct answer: 0.62
+estimated: 0.7221175
+*******
+correct answer: 0.74
+estimated: 0.73335636
+*******
+correct answer: 0.73
+estimated: 0.738866
+*******
+correct answer: 0.64
+estimated: 0.72021633
+*******
+correct answer: 0.63
+estimated: 0.7240108
+*******
+correct answer: 0.59
+estimated: 0.71639013
+*******
+correct answer: 0.73
+estimated: 0.7315034
+*******
+correct answer: 0.79
+estimated: 0.73703766
+*******
+correct answer: 0.68
+estimated: 0.72777325
+*******
+correct answer: 0.7
+estimated: 0.7296424
+*******
+correct answer: 0.81
+estimated: 0.73335636
+*******
+```
