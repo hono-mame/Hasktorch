@@ -139,6 +139,8 @@ calculateNewB estY oldB =
   in oldB - total * 2e-5
 ```
 
+![](photos/Calculate_gradient.jpeg)
+
 I changed the number of arguments of each function...  
 
 **TODO: Improve functions so that learning rates are obtained from arguments rather than directly entered**
