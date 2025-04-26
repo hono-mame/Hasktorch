@@ -107,7 +107,7 @@ train xs ys n (a, b) losses = do
 
 main :: IO ()
 main = do
-  (xs, ys) <- loadXY "app/Session3/data/train.csv"
+  (xs, ys) <- loadXY "Session3/data/train.csv"
   -- putStrLn "xs:"
   -- print xs
   -- putStrLn "ys:"
@@ -126,7 +126,7 @@ main = do
   putStrLn $ "Final coefficient B: " ++ show (asValue finalB :: [Float])
   putStrLn "---------------------------------------"
 
-  (xEval, yEval) <- loadXY "app/Session3/data/eval.csv"
+  (xEval, yEval) <- loadXY "Session3/data/eval.csv"
   let predEvalY = linear (finalA, finalB) xEval
   printOutput predEvalY yEval
 
@@ -135,4 +135,4 @@ main = do
   putStrLn "Loss values:"
   print lossValues
   -- needs to be fixed (does not work)
-  drawLearningCurve "app/Session3/charts/GraduateAdmissionLinearLearningCurve.png" "Learning Curve" [("Training Loss", lossValues)]
+  drawLearningCurve "Session3/charts/GraduateAdmissionLinearLearningCurve.png" "Learning Curve" [("Training Loss", lossValues)]

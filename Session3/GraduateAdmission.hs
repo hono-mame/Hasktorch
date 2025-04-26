@@ -119,7 +119,7 @@ train xs ys n (a, b) losses = do
 
 main :: IO ()
 main = do
-  (xs, ys) <- loadXY "app/Session3/data/train.csv"
+  (xs, ys) <- loadXY "Session3/data/train.csv"
   -- putStrLn "xs:"
   -- print xs
   -- putStrLn "ys:"
@@ -138,7 +138,7 @@ main = do
   putStrLn $ "Final coefficient B: " ++ show (asValue finalB :: [Float])
   putStrLn "---------------------------------------"
 
-  (xEval, yEval) <- loadXY "app/Session3/data/eval.csv"
+  (xEval, yEval) <- loadXY "Session3/data/eval.csv"
   let predEvalY = sigmoid  (finalA, finalB) xEval
   printOutput predEvalY yEval
 

@@ -39,7 +39,7 @@ library:
 executables:
   session3-linear-regression:
     main: LinearRegression.hs
-    source-dirs: app/Session3
+    source-dirs: Session3
     ghc-options:
     - -threaded
     - -rtsopts
@@ -53,7 +53,7 @@ executables:
   
   session3-graduate-admission-linear:
     main: GraduateAdmissionLinear.hs
-    source-dirs: app/Session3
+    source-dirs: Session3
     ghc-options:
       - -threaded
       - -rtsopts
@@ -71,7 +71,7 @@ executables:
   
   session3-multiple-regression:
     main: MultipleRegression.hs
-    source-dirs: app/Session3
+    source-dirs: Session3
     ghc-options:
       - -threaded
       - -rtsopts
@@ -89,7 +89,7 @@ executables:
 
   session3-graduate-admission:
     main: GraduateAdmission.hs
-    source-dirs: app/Session3
+    source-dirs: Session3
     ghc-options:
       - -threaded
       - -rtsopts

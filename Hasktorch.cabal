@@ -40,7 +40,7 @@ library
 executable session3-graduate-admission
   main-is: GraduateAdmission.hs
   hs-source-dirs:
-      app/Session3
+      Session3
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Hasktorch
@@ -56,7 +56,7 @@ executable session3-graduate-admission
 executable session3-graduate-admission-linear
   main-is: GraduateAdmissionLinear.hs
   hs-source-dirs:
-      app/Session3
+      Session3
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Hasktorch
@@ -72,7 +72,7 @@ executable session3-graduate-admission-linear
 executable session3-linear-regression
   main-is: LinearRegression.hs
   hs-source-dirs:
-      app/Session3
+      Session3
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Hasktorch
@@ -84,7 +84,7 @@ executable session3-linear-regression
 executable session3-multiple-regression
   main-is: MultipleRegression.hs
   hs-source-dirs:
-      app/Session3
+      Session3
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       Hasktorch
