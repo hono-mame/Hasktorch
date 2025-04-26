@@ -3,3 +3,5 @@
 .DS_Store
 Session2/.ipynb_checkpoints/
 Session3/data/
+.ipynb_checkpoints/
+dist-newstyle/
