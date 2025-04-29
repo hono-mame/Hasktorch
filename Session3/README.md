@@ -263,6 +263,12 @@ A: 2.0337062 B: -7.361419e-2
 ・
 ・
 ******************
+Epoch 95: Loss = 1.1848298e-2
+A: 7.649397e-3 B: -9.234251e-2
+******************
+Epoch 96: Loss = 1.1848298e-2
+A: 7.6493975e-3 B: -9.234258e-2
+******************
 Epoch 97: Loss = 1.1848296e-2
 A: 7.649398e-3 B: -9.2342645e-2
 ******************
@@ -274,7 +280,7 @@ A: 7.6494e-3 B: -9.234278e-2
 ******************
 ---------------------------------------
 Epoch: 100
-Final cost: 1.1848291e-2
+Final cost: 1.1848293e-2
 Final coefficient A: [7.6494e-3]
 Final coefficient B: [-9.234278e-2]
 ---------------------------------------
@@ -415,9 +421,9 @@ drawLearningCurve ::
   -> [LearningChart] -- ^ The list of data
   -> IO()
 ```
-does not work :(
+![](charts/GraduateAdmissionLinearLearningCurve.png)
 
-### Predict chance of Admit in a different way
+### 6. Predict chance of Admit in a different way
 → used Sigmoid function (Logistic Regression)
 → still trying improving...
 → need more than two explanatory variables ???

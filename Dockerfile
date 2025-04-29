@@ -21,3 +21,5 @@ RUN cabal v1-install /home/ubuntu/libraries/hasktorch/hasktorch /home/ubuntu/lib
 
 WORKDIR /home/ubuntu
 RUN cabal v1-install ./libraries/hasktorch-tools ./libraries/nlp-tools --ghc-options "-j1 +RTS -A128m -n2m -RTS"
+
+RUN sudo apt update -y && sudo apt install -y gnuplot

@@ -1,14 +1,24 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+import Torch.Tensor (Tensor, asTensor, asValue, numel)
+import Torch.Functional (matmul, mul, add, sub, transpose2D, sumAll)
+import Torch.Functional.Internal (meanAll, powScalar)
+
+-------------- for reading CSV file --------------
 import GHC.Generics (Generic)
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.Vector as V
 import Data.Csv
-import Torch.Tensor (Tensor, asTensor, asValue)
-import Torch.Functional (matmul, mul, add, sub, transpose2D, sumAll)
-import Torch.Functional.Internal (meanAll, powScalar)
+
+-------------- for drawing learning curve --------------
 import ML.Exp.Chart (drawLearningCurve)
+
+
+epoch :: Int
+epoch = 100
+learningRate :: Tensor
+learningRate = 2e-5
 
 -- structure of input CSV
 data Input = Row
@@ -22,7 +32,7 @@ instance FromRecord Input
 loadXY :: FilePath -> IO (Tensor, Tensor)
 loadXY filePath = do
   csvData <- BL.readFile filePath
-  case decode HasHeader csvData of  -- ヘッダーありCSVを読み込む
+  case decode HasHeader csvData of  -- read a CSV file with header
     Right v -> do
       let xsList = V.toList $ V.map x v  -- get x as a list
           ysList = V.toList $ V.map y v  -- get y as a list
@@ -69,8 +79,9 @@ calculateNewA ::
      Tensor    -- newA
 calculateNewA xs ys estY oldA =
     let diff  = estY - ys
-        diff2 = (sumAll $ (mul xs diff)) / 320
-  in oldA - diff2 * 2e-5
+        n = asTensor (fromIntegral (numel ys) :: Int) :: Tensor
+        diff2 = (sumAll $ (mul xs diff)) / n
+  in oldA - diff2 * learningRate
 
 calculateNewB ::
      Tensor -> -- xs
@@ -80,45 +91,45 @@ calculateNewB ::
      Tensor    -- newB
 calculateNewB xs ys estY oldB =
     let diff = estY - ys
-        total = sumAll diff / 320
-  in oldB - total * 2e-5
+        n = asTensor (fromIntegral (numel ys) :: Int) :: Tensor
+        total = sumAll diff / n
+  in oldB - total * learningRate
 
 train ::
-    Tensor -> -- xs
-    Tensor -> -- ys
-    Int ->    -- epoch
-    (Tensor, Tensor) -> -- params (a, b)
-    [Tensor] ->         -- accumulated losses
-    IO ((Tensor, Tensor), [Tensor])
-train xs ys 0 params losses = return (params, reverse losses)
-train xs ys n (a, b) losses = do
+  Tensor ->           -- xs
+  Tensor ->           -- ys
+  Int ->              -- totalEpoch
+  Int ->              -- currentEpoch
+  (Tensor, Tensor) -> -- params (a, b)
+  [Tensor] ->         -- accumulated losses
+  IO ((Tensor, Tensor), [Tensor])
+train xs ys totalEpoch 0 params losses = return (params, reverse losses)
+train xs ys totalEpoch n (a, b) losses = do
   let estY = linear (a, b) xs
       currLoss = cost estY ys
       lossVal = asValue currLoss :: Float
-  putStrLn $ "Epoch " ++ show (100 - n) ++ ": Loss = " ++ show lossVal
+      currentEpoch = totalEpoch - n
+  putStrLn $ "Epoch " ++ show currentEpoch ++ ": Loss = " ++ show lossVal
   let newA = calculateNewA xs ys estY a
       newB = calculateNewB xs ys estY b
       newAvalue = asValue newA :: Float
       newBvalue = asValue newB :: Float
   putStrLn $ "A: " ++ show newAvalue ++ " B: " ++ show newBvalue
   putStrLn "******************"
-  train xs ys (n - 1) (newA, newB) (currLoss : losses)
+  train xs ys totalEpoch (n - 1) (newA, newB) (currLoss : losses)
 
 
 main :: IO ()
 main = do
   (xs, ys) <- loadXY "Session3/data/train.csv"
-  -- putStrLn "xs:"
-  -- print xs
-  -- putStrLn "ys:"
-  -- print ys
   let initialA = asTensor ([10.0] :: [Float])
   let initialB = asTensor ([0.0] :: [Float])
-  let epoch = 100  -- do not forget to change the number inside the function "train"
-  ((finalA, finalB), losses) <- train xs ys epoch (initialA, initialB) []
+
+  ((finalA, finalB), losses) <- train xs ys epoch epoch (initialA, initialB) []
+
   let finalY = linear (finalA, finalB) xs
-  -- printOutput finalY ys
   let finalLoss = asValue (cost finalY ys) :: Float
+
   putStrLn "---------------------------------------"
   putStrLn $ "Epoch: " ++ show epoch
   putStrLn $ "Final cost: " ++ show (asValue (last losses) :: Float)
@@ -132,7 +143,4 @@ main = do
 
   -- Learning Curve 
   let lossValues = map (\t -> asValue t :: Float) losses
-  putStrLn "Loss values:"
-  print lossValues
-  -- needs to be fixed (does not work)
   drawLearningCurve "Session3/charts/GraduateAdmissionLinearLearningCurve.png" "Learning Curve" [("Training Loss", lossValues)]
