@@ -1,4 +1,7 @@
 .stack-work/
 *~
 .DS_Store
-HaskTorchExercises/.ipynb_checkpoints/
+Session2/.ipynb_checkpoints/
+Session3/data/
+.ipynb_checkpoints/
+dist-newstyle/
