@@ -61,6 +61,6 @@ small → smaller step, slow :(
 🌟ステップが大きいと最小に無限にたどり着けなくなってしまう&小さいと時間がかかりすぎてしまう🌟
 
 **→ best way: set α to around 0.01**
-
+ 
 α: hyper parameter
 →a1,a2などには影響しないが、モデルのパフォーマンスに大きく影響する!
