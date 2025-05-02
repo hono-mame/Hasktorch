@@ -53,6 +53,23 @@ executable session3-linear-regression
     , hasktorch-tools
   default-language: Haskell2010
 
+executable session4-perceptron-andgate
+  main-is: PerceptronAndGate.hs
+  hs-source-dirs:
+      Session4
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      Hasktorch
+    , base >=4.7 && <5
+    , bytestring
+    , cassava
+    , hasktorch ==0.2.0.0
+    , hasktorch-tools
+    , nlp-tools
+    , random
+    , vector
+  default-language: Haskell2010
+
 test-suite Hasktorch-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
