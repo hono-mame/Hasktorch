@@ -48,8 +48,8 @@ mlp MLP {..} input = foldl' revApply input $ intersperse nonlinearity $ map line
 
 batchSize = 2
 
-numIters = 1500
-learningRate = 1e-1
+numIters = 4000
+learningRate = 3e-1
 
 model :: MLP -> Tensor -> Tensor
 model params t = mlp params t
@@ -60,7 +60,7 @@ main = do
     sample $
       MLPSpec
         { feature_counts = [2, 2, 1],
-          nonlinearitySpec = Torch.tanh
+          nonlinearitySpec = Torch.sigmoid
         }
   (trained, lossValues) <- foldLoop (init, []) numIters $ \(state, losses) i-> do
     input <- randIO' [batchSize, 2] >>= return . (toDType Float) . (gt 0.5)
@@ -72,7 +72,7 @@ main = do
     (newState, _) <- runStep state optimizer loss learningRate
     return (newState, losses ++ [lossValue])
 
-  drawLearningCurve "Session4/charts/MlpXor.png" "Learning Curve" [("Training Loss", lossValues)]
+  drawLearningCurve "Session4/charts/MlpXor_sigmoid.png" "Learning Curve" [("Training Loss", lossValues)]
   
   putStrLn $ "---------------------------------------"
   putStrLn $ "number of iterations: " ++ show numIters
