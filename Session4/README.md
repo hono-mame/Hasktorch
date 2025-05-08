@@ -38,7 +38,7 @@ Input: [0.0,0.0] Predicted: 0.0 True: 0.0
 ## 4.2 understaing the implementation of Multi-Layer Perceptron in hasktorch
 
 ### 1. definition of MLP
-```
+```haskell
 data MLPSpec = MLPSpec
   { feature_counts :: [Int],
     nonlinearitySpec :: Tensor -> Tensor
@@ -51,7 +51,7 @@ data MLPSpec = MLPSpec
   ex) Torch.tanh
 
 
-```
+```haskell
 data MLP = MLP
   { layers :: [Linear],
     nonlinearity :: Tensor -> Tensor
@@ -67,14 +67,14 @@ data MLP = MLP
 
 
 ### 2. implement the MLP
-```
+```haskell
 mlp :: MLP -> Tensor -> Tensor
 mlp MLP {..} input = foldl' revApply input $ intersperse nonlinearity $ map linear layers
 ```
 
 
 ### 3. implement XOR function
-```
+```haskell
 tensorXOR :: Tensor -> Tensor
 tensorXOR t = (1 - (1 - a) * (1 - b)) * (1 - (a * b))
   where
@@ -85,20 +85,20 @@ tensorXOR t = (1 - (1 - a) * (1 - b)) * (1 - (a * b))
 
 ### 4. training process
 **① initialize the model**
-```
+```haskell
 init <- sample $ MLPSpec { feature_counts = [2, 2, 1], 
 ```
 input layer: two dimentions  
 hidden layer: two dimentions  
 output lyaer: one dimention
 
-```
+```haskell
 nonlinearitySpec = Torch.tanh } 
 ```
 specify the activation function (tanh)
 
 **② training roop**
-```
+```haskell
 trained <- foldLoop init numIters $ \state i -> do
   input <- randIO' [batchSize, 2] >>= return . (toDType Float) . (gt 0.5)
   let (y, y') = (tensorXOR input, squeezeAll $ model state input)
@@ -110,21 +110,21 @@ trained <- foldLoop init numIters $ \state i -> do
 ```
 
 **a. generate a training data**
-```
+```haskell
 input <- randIO' [batchSize, 2] >>= return . (toDType Float) . (gt 0.5)
 ```
 if the value is greater than 0.5, then set it to 1. Otherwise, 0 and convert to Float  
 
 
 **b. compare the predicted value to actual value**
-```
+```haskell
 let (y, y') = (tensorXOR input, squeezeAll $ model state input)
     loss = mseLoss y y'
 ```
 y: actual value → calculated by tensorXOR (function)  
 y': predicted value → calculated by model state input
 
-```
+```haskell
 tensorXOR :: Tensor -> Tensor
     tensorXOR t = (1 - (1 - a) * (1 - b)) * (1 - (a * b))
       where
@@ -133,7 +133,7 @@ tensorXOR :: Tensor -> Tensor
 ```
 
 **c. renew the model**
-```
+```haskell
 (newState, _) <- runStep state optimizer loss 1e-1
 return newState
 ・
@@ -148,7 +148,7 @@ passes the new model parameter to next iteration.
 ---
 ### Experiment with XOR using other activate function
 **tanh**
-```
+```haskell
 MLPSpec
         { feature_counts = [2, 2, 1],
           nonlinearitySpec = Torch.tanh
@@ -310,7 +310,7 @@ Final Model:
 ![](charts/MlpXor_step_result.png)
 
 I used the threshold function to express the step function, but I am not sure if it works propery...
-```
+```haskell
 -- | Thresholds each element of the input Tensor.
 threshold ::
   -- | threshold
