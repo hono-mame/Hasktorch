@@ -3,7 +3,7 @@
 docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack run session4-perceptron-andgate"
 ```
 
-### 4.1 Build and train an AND gate using a simple perceptron
+## 4.1 Build and train an AND gate using a simple perceptron
 
 Learning rate: 0.1
 ```
@@ -34,3 +34,115 @@ Input: [1.0,0.0] Predicted: 0.0 True: 0.0
 Input: [0.0,1.0] Predicted: 0.0 True: 0.0
 Input: [0.0,0.0] Predicted: 0.0 True: 0.0
 ```
+
+## 4.2 understaing the implementation of Multi-Layer Perceptron in hasktorch
+
+### 1. definition of MLP
+```
+data MLPSpec = MLPSpec
+  { feature_counts :: [Int],
+    nonlinearitySpec :: Tensor -> Tensor
+  }
+```
+→ Defines the MLP architecture:  
+- feature_counts: A list specifying **the number of units** in each layer.
+
+- nonlinearitySpec: Specifies **the non-linear activation function.**  
+  ex) Torch.tanh
+
+
+```
+data MLP = MLP
+  { layers :: [Linear],
+    nonlinearity :: Tensor -> Tensor
+  }
+  deriving (Generic, Parameterized)
+
+```
+→ Represents the MLP model:
+
+- layers: A list of linear layers.
+
+- nonlinearity: The activation function from MLPSpec
+
+
+### 2. implement the MLP
+```
+mlp :: MLP -> Tensor -> Tensor
+mlp MLP {..} input = foldl' revApply input $ intersperse nonlinearity $ map linear layers
+```
+
+
+### 3. implement XOR function
+```
+tensorXOR :: Tensor -> Tensor
+tensorXOR t = (1 - (1 - a) * (1 - b)) * (1 - (a * b))
+  where
+    a = select 1 0 t
+    b = select 1 1 t
+```
+
+
+### 4. training process
+① initialize the model
+```
+init <- sample $ MLPSpec { feature_counts = [2, 2, 1], 
+```
+input layer: two dimentions  
+hidden layer: two dimentions  
+output lyaer: one dimention
+
+```
+nonlinearitySpec = Torch.tanh } 
+```
+specify the activation function (tanh)
+
+② training roop
+```
+trained <- foldLoop init numIters $ \state i -> do
+  input <- randIO' [batchSize, 2] >>= return . (toDType Float) . (gt 0.5)
+  let (y, y') = (tensorXOR input, squeezeAll $ model state input)
+      loss = mseLoss y y'
+  when (i `mod` 100 == 0) $ do
+    putStrLn $ "Iteration: " ++ show i ++ " | Loss: " ++ show loss
+  (newState, _) <- runStep state optimizer loss 1e-1
+  return newState
+```
+---
+a. generate a training data
+```
+input <- randIO' [batchSize, 2] >>= return . (toDType Float) . (gt 0.5)
+```
+if the value is greater than 0.5, then set it to 1. Otherwise, 0 and convert to Float  
+
+---
+
+b. compare the predicted value to actual value
+```
+let (y, y') = (tensorXOR input, squeezeAll $ model state input)
+    loss = mseLoss y y'
+```
+y: actual value → calculated by tensorXOR (function)  
+y': predicted value → calculated by model state input
+
+```
+tensorXOR :: Tensor -> Tensor
+    tensorXOR t = (1 - (1 - a) * (1 - b)) * (1 - (a * b))
+      where
+        a = select 1 0 t
+        b = select 1 1 t
+```
+---
+c. renew the model
+```
+(newState, _) <- runStep state optimizer loss 1e-1
+return newState
+・
+・
+・
+optimizer = GD
+```
+Learning rate: 0.1    
+This training uses gardient descent method.  
+passes the new model parameter to next iteration.
+
