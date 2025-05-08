@@ -84,7 +84,7 @@ tensorXOR t = (1 - (1 - a) * (1 - b)) * (1 - (a * b))
 
 
 ### 4. training process
-① initialize the model
+**① initialize the model**
 ```
 init <- sample $ MLPSpec { feature_counts = [2, 2, 1], 
 ```
@@ -97,7 +97,7 @@ nonlinearitySpec = Torch.tanh }
 ```
 specify the activation function (tanh)
 
-② training roop
+**② training roop**
 ```
 trained <- foldLoop init numIters $ \state i -> do
   input <- randIO' [batchSize, 2] >>= return . (toDType Float) . (gt 0.5)
@@ -108,16 +108,15 @@ trained <- foldLoop init numIters $ \state i -> do
   (newState, _) <- runStep state optimizer loss 1e-1
   return newState
 ```
----
-a. generate a training data
+
+**a. generate a training data**
 ```
 input <- randIO' [batchSize, 2] >>= return . (toDType Float) . (gt 0.5)
 ```
 if the value is greater than 0.5, then set it to 1. Otherwise, 0 and convert to Float  
 
----
 
-b. compare the predicted value to actual value
+**b. compare the predicted value to actual value**
 ```
 let (y, y') = (tensorXOR input, squeezeAll $ model state input)
     loss = mseLoss y y'
@@ -132,8 +131,8 @@ tensorXOR :: Tensor -> Tensor
         a = select 1 0 t
         b = select 1 1 t
 ```
----
-c. renew the model
+
+**c. renew the model**
 ```
 (newState, _) <- runStep state optimizer loss 1e-1
 return newState
@@ -146,7 +145,8 @@ Learning rate: 0.1
 This training uses gardient descent method.  
 passes the new model parameter to next iteration.
 
-### d. Experiment with XOR using other activate function
+---
+### Experiment with XOR using other activate function
 **tanh**
 ```
 MLPSpec
@@ -308,3 +308,25 @@ Final Model:
 ---------------------------------------
 ```
 ![](charts/MlpXor_step_result.png)
+
+I used the threshold function to express the step function, but I am not sure if it works propery...
+```
+-- | Thresholds each element of the input Tensor.
+threshold ::
+  -- | threshold
+  Float ->
+  -- | value
+  Float ->
+  -- | input
+  Tensor ->
+  -- | output
+  Tensor
+threshold threshold value self =
+  unsafePerformIO $ cast3 ATen.threshold_tss self threshold value
+```
+
+**What I have learned:**  
+It is clear that when using activation functions like **tanh or sigmoid**, higher accuracy can be achieved during training.   
+In contrast, the **step** activation function performs worse compared to the other two.
+Moreover, I noticed that with **tanh, the number of iterations required for the loss to approach zero is smaller than with sigmoid**.  
+This leads me to believe that **tanh is superior to sigmoid.**
