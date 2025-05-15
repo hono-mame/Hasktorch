@@ -165,8 +165,8 @@ executable session4-perceptron-mlpxor-step
     , vector
   default-language: Haskell2010
 
-executable session5-evaluation
-  main-is: Evaluation.hs
+executable session5-admission
+  main-is: Admit.hs
   hs-source-dirs:
       Session5
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
@@ -174,7 +174,7 @@ executable session5-evaluation
       Hasktorch
     , base >=4.7 && <5
     , bytestring
-    , cassava
+    , cassava >=0.5
     , hasktorch ==0.2.0.0
     , hasktorch-tools
     , nlp-tools

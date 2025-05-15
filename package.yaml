@@ -181,8 +181,8 @@ executables:
       - random
     other-modules: []
 
-  session5-evaluation:
-    main: Evaluation.hs
+  session5-admission:
+    main: Admit.hs
     source-dirs: Session5
     ghc-options:
       - -threaded
@@ -198,6 +198,7 @@ executables:
       - vector
       - nlp-tools
       - random
+      - cassava >= 0.5
     other-modules: []
 
 tests:
