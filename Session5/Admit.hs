@@ -140,8 +140,8 @@ main = do
   
   -- initialize model
   initModel <- sample $ MLPSpec
-    { feature_counts = [7, 4, 2, 1],
-      nonlinearitySpec = Torch.sigmoid
+    { feature_counts = [7, 64, 32, 16, 1],
+      nonlinearitySpec = Torch.tanh
     }
 
   -- Training
