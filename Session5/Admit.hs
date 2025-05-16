@@ -14,7 +14,7 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.Vector as V
 import Data.Csv (decodeByName, FromNamedRecord)
 import ML.Exp.Chart (drawLearningCurve)
-import Evaluation (evalAccuracy, evalPrecision, evalRecall, calcF1)
+import Evaluation (evalAccuracy, evalPrecision, evalRecall, calcF1, evalMacroF1, evalWeightedF1, evalMicroF1, confusionMatrix, confusionMatrixPairs)
 import Torch.Tensor (Tensor, asTensor, asValue)
 import Torch.Functional (mul, add, sub, sigmoid, logSoftmax, nllLoss', binaryCrossEntropyLoss')
 import Torch.Device (Device)
@@ -81,8 +81,8 @@ loadAdmissionData filePath = do
       return (inputTensor, targetTensor)
 
 batchSize = 2
-numIters = 3000
-learningRate = 1e-2
+numIters = 400
+learningRate = 1e-3
 
 trainMLP :: MLP -> Tensor -> Tensor -> IO MLP
 trainMLP initModel inputs targets = do
@@ -120,32 +120,51 @@ trainMLP_crossEntropy initModel inputs targets = do
 evaluateModel :: MLP -> Tensor -> Tensor -> IO ()
 evaluateModel trainedModel inputs targets = do
   let predictions = sigmoid (mlp trainedModel inputs)
-      predictedLabels = toType Float (gt predictions 0.5)
-      trueLabels = toType Float (gt targets 0.5)
+      predictedLabels = toType Float (gt predictions 0.675)
+      trueLabels = toType Float (gt targets 0.675)
   putStrLn $ "targets: " ++ show (asValue targets :: [[Float]])
+
   let tp = sumAll (mul predictedLabels trueLabels)
       tn = sumAll (mul (1 - predictedLabels) (1 - trueLabels))
       fp = sumAll (mul predictedLabels (1 - trueLabels))
       fn = sumAll (mul (1 - predictedLabels) trueLabels)
-  putStrLn $ "True Positives: " ++ show (asValue tp :: Float)
-  putStrLn $ "True Negatives: " ++ show (asValue tn :: Float)
-  putStrLn $ "False Positives: " ++ show (asValue fp :: Float)
-  putStrLn $ "False Negatives: " ++ show (asValue fn :: Float)
+
+  let cm = confusionMatrix tp tn fp fn 
+      cmPairs = confusionMatrixPairs cm
+
   putStrLn $ "Predictions: " ++ show (asValue predictions :: [[Float]])
   putStrLn $ "Predicted Labels: " ++ show (asValue predictedLabels :: [[Float]])
   putStrLn $ "True Labels: " ++ show (asValue trueLabels :: [[Float]])
+
+  mapM_ (\(i, (tp', tn', fp', fn')) -> do
+            let acc = evalAccuracy tp' tn' fp' fn'
+                prec = evalPrecision tp' fp'
+                recall = evalRecall tp' fn'
+                f1 = calcF1 prec recall
+            putStrLn $ "\nPair " ++ show i ++ ":"
+            putStrLn $ "  True Positive: " ++ show (asValue tp' :: Float)
+            putStrLn $ "  True Negative: " ++ show (asValue tn' :: Float)
+            putStrLn $ "  False Positive: " ++ show (asValue fp' :: Float)
+            putStrLn $ "  False Negative: " ++ show (asValue fn' :: Float)
+            putStrLn $ "  Accuracy: " ++ show (asValue acc :: Float)
+            putStrLn $ "  Precision: " ++ show (asValue prec :: Float)
+            putStrLn $ "  Recall: " ++ show (asValue recall :: Float)
+            putStrLn $ "  F1 Score: " ++ show (asValue f1 :: Float)
+        ) (zip [1..] cmPairs)
 
   let accuracy = evalAccuracy tp tn fp fn
       precision = evalPrecision tp fp 
       recall = evalRecall tp fn
       f1Score = calcF1 precision recall
+      macroF1 = evalMacroF1 cmPairs
+      support = [tp + fn, fp + tn]
+      weightedF1 = evalWeightedF1 cmPairs support
+      microF1 = evalMicroF1 cmPairs
 
-  putStrLn $ "\nEvaluation Results:"
-  putStrLn $ "Accuracy: " ++ show (asValue accuracy :: Float)
-  putStrLn $ "Precision: " ++ show (asValue precision :: Float)
-  putStrLn $ "Recall: " ++ show (asValue recall :: Float)
-  putStrLn $ "F1 Score: " ++ show (asValue f1Score :: Float)
-
+  putStrLn "\nOverall Evaluation Results:"
+  putStrLn $ "Macro F1 Score: " ++ show (asValue macroF1 :: Float)
+  putStrLn $ "Weighted F1 Score: " ++ show (asValue weightedF1 :: Float)
+  putStrLn $ "Micro F1 Score: " ++ show (asValue microF1 :: Float)
 
 main :: IO ()
 main = do

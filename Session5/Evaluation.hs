@@ -1,4 +1,4 @@
-module Evaluation (evalAccuracy, evalPrecision, evalRecall, calcF1, evalMacroF1, evalWeightedF1, evalMicroF1) where
+module Evaluation (confusionMatrix, confusionMatrixPairs, evalAccuracy, evalPrecision, evalRecall, calcF1, evalMacroF1, evalWeightedF1, evalMicroF1) where
 
 import Torch.Tensor (Tensor, asTensor, asValue)
 import Torch.Functional (matmul, mul, add, sub)
@@ -44,6 +44,9 @@ confusionMatrix tp tn fp fn = [
         [fp, tn]
     ]
 
+confusionMatrixPairs :: [[Tensor]] -> [(Tensor, Tensor, Tensor, Tensor)]
+confusionMatrixPairs [[tp, fn], [fp, tn]] = [(tp, tn, fp, fn), (tn, tp, fn, fp)]
+
 calcF1 :: Tensor -> Tensor -> Tensor
 calcF1 precision recall = 2 * precision * recall / (precision + recall)
 
@@ -84,7 +87,7 @@ evalMicroF1 ::
     [(Tensor, Tensor, Tensor, Tensor)] -> 
     Tensor
 evalMicroF1 confusionData = 
-    let (tps, tßns, fps, fns) = foldl accumData (0, 0, 0, 0) confusionData
+    let (tps, tns, fps, fns) = foldl accumData (0, 0, 0, 0) confusionData
         microPrecision = evalPrecision tps fps
         microRecall = evalRecall tps fns
         f1Score = calcF1 microPrecision microRecall
