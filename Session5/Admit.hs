@@ -16,7 +16,7 @@ import Data.Csv (decodeByName, FromNamedRecord)
 import ML.Exp.Chart (drawLearningCurve)
 import Evaluation (evalAccuracy, evalPrecision, evalRecall, calcF1)
 import Torch.Tensor (Tensor, asTensor, asValue)
-import Torch.Functional (mul, add, sub, sigmoid)
+import Torch.Functional (mul, add, sub, sigmoid, logSoftmax, nllLoss', binaryCrossEntropyLoss')
 import Torch.Device (Device)
 import Control.Monad (forM, forM_)
 
@@ -80,10 +80,9 @@ loadAdmissionData filePath = do
       
       return (inputTensor, targetTensor)
 
-
 batchSize = 2
-numIters = 1000
-learningRate = 1e-3
+numIters = 3000
+learningRate = 1e-2
 
 trainMLP :: MLP -> Tensor -> Tensor -> IO MLP
 trainMLP initModel inputs targets = do
@@ -102,12 +101,28 @@ trainMLP initModel inputs targets = do
     optimizer = GD
 
 
+trainMLP_crossEntropy :: MLP -> Tensor -> Tensor -> IO MLP
+trainMLP_crossEntropy initModel inputs targets = do
+  (trainedModel, lossValues) <- foldLoop (initModel, []) numIters $ \(state, losses) i -> do
+    let yPred = sigmoid (mlp state inputs)
+        loss = binaryCrossEntropyLoss' yPred targets
+        lossValue = asValue loss :: Float
+    when (i `mod` 300 == 0) $ do
+      putStrLn $ "Iteration: " ++ show i ++ " | Loss: " ++ show lossValue
+    (newState, _) <- runStep state optimizer loss learningRate
+    return (newState, losses ++ [lossValue])
+  
+  drawLearningCurve "Session5/charts/MLP_Admission_LearningCurve_CrossEntropy.png" "Learning Curve (Binary Cross Entropy)" [("Training Loss", lossValues)]
+  return trainedModel
+  where
+    optimizer = GD
+
 evaluateModel :: MLP -> Tensor -> Tensor -> IO ()
 evaluateModel trainedModel inputs targets = do
-  let predictions = mlp trainedModel inputs
+  let predictions = sigmoid (mlp trainedModel inputs)
       predictedLabels = toType Float (gt predictions 0.5)
-      trueLabels = targets
-
+      trueLabels = toType Float (gt targets 0.5)
+  putStrLn $ "targets: " ++ show (asValue targets :: [[Float]])
   let tp = sumAll (mul predictedLabels trueLabels)
       tn = sumAll (mul (1 - predictedLabels) (1 - trueLabels))
       fp = sumAll (mul predictedLabels (1 - trueLabels))
@@ -119,7 +134,6 @@ evaluateModel trainedModel inputs targets = do
   putStrLn $ "Predictions: " ++ show (asValue predictions :: [[Float]])
   putStrLn $ "Predicted Labels: " ++ show (asValue predictedLabels :: [[Float]])
   putStrLn $ "True Labels: " ++ show (asValue trueLabels :: [[Float]])
-  putStrLn $ "Input Data: " ++ show (asValue inputs :: [[Float]])
 
   let accuracy = evalAccuracy tp tn fp fn
       precision = evalPrecision tp fp 

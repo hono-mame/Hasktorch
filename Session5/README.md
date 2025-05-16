@@ -97,3 +97,100 @@ Predictions: [[0.54611754],[0.54606634],[0.5461296],[0.54613453],[0.5461305],[0.
 ```
 :(  
 
+## 4.a loss functions
+
+### negative log entropy
+https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.nll_loss.html#torch.nn.functional.nll_loss
+
+Entropy is a measure of uncertainty (disorder).  
+The entropy  H(P)  of a probability distribution  P  is defined as:
+
+$$
+H(P) = - \sum_{i} P(x_i) \log P(x_i)
+$$
+
+Negative log entropy is simply the negative of this value:
+
+$$
+- H(P) = \sum_{i} P(x_i) \log P(x_i)
+$$
+
+**Usage in Machine Learning:**  
+→ Negative log entropy can be used for maximizing information content (ensuring effective learning).
+
+### cross entropy
+https://en.wikipedia.org/wiki/Cross-entropy
+
+https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.cross_entropy.html#torch.nn.functional.cross_entropy
+
+Cross entropy measures the similarity between a "true distribution P" and a "predicted distribution Q ":
+
+$$
+H(P, Q) = - \sum_{i} P(x_i) \log Q(x_i)
+$$
+
+- P is the true probability distribution (ground truth).
+- Q is the predicted probability distribution from a model.
+
+
+**Usage in Machine Learning:**    
+- **Classification Problems:** Used as a loss function in neural networks (especially softmax + cross-entropy).
+- **Model Evaluation:** Evaluates how well a model's predictions match the true distribution.
+
+### KL divergence
+https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
+
+https://docs.pytorch.org/docs/stable/generated/torch.nn.functional.kl_div.html#torch.nn.functional.kl_div
+
+KL Divergence measures how much one distribution P diverges from another distribution Q:
+
+$$
+D_{KL}(P \parallel Q) = \sum_{i} P(x_i) \log \frac{P(x_i)}{Q(x_i)}
+$$
+
+- P is the true (reference) distribution.
+- Q is the approximated (predicted) distribution.
+
+**Usage in Machine Learning:**    
+Used in VAE (Variational Autoencoders) to minimize the difference between latent distributions.
+
+### Relationship Between the Three
+- **Negative Log Entropy** measures the "self-information" of a distribution.
+- **Cross Entropy** measures how different a predicted distribution is from the true distribution.
+- **KL Divergence** is the difference between cross entropy and entropy:
+
+$$
+D_{KL}(P \parallel Q) = H(P, Q) - H(P)
+$$
+
+This means KL Divergence quantifies the "distance" between the true distribution and the predicted distribution.
+
+https://qiita.com/dennkitoiryou11/items/9f1451d90393e036e973
+
+## 4.b Try using these three loss functions
+
+### negative log entropy
+
+### cross entropy
+used  **binaryCrossEntropyLoss'** function
+```haskell
+trainMLP_crossEntropy :: MLP -> Tensor -> Tensor -> IO MLP
+trainMLP_crossEntropy initModel inputs targets = do
+  (trainedModel, lossValues) <- foldLoop (initModel, []) numIters $ \(state, losses) i -> do
+    let yPred = sigmoid (mlp state inputs)
+        loss = binaryCrossEntropyLoss' yPred targets
+        lossValue = asValue loss :: Float
+    when (i `mod` 300 == 0) $ do
+      putStrLn $ "Iteration: " ++ show i ++ " | Loss: " ++ show lossValue
+    (newState, _) <- runStep state optimizer loss learningRate
+    return (newState, losses ++ [lossValue])
+  
+  drawLearningCurve "Session5/charts/MLP_Admission_LearningCurve_CrossEntropy.png" "Learning Curve (Binary Cross Entropy)" [("Training Loss", lossValues)]
+  return trainedModel
+  where
+    optimizer = GD
+
+
+```
+
+### KL divergence
