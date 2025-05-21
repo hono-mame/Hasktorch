@@ -5,3 +5,7 @@ Session2/.ipynb_checkpoints/
 Session3/data/
 .ipynb_checkpoints/
 dist-newstyle/
+*.o
+*.hi
+Session5/data/
+Session6/data/
