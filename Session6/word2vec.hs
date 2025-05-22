@@ -35,7 +35,7 @@ wordLstPath = "Session6/data/wordlst_150.txt"
 learningRate :: Float
 learningRate = 0.1
 numIters :: Int
-numIters = 10
+numIters = 100
 
 data EmbeddingSpec = EmbeddingSpec {
   wordNum :: Int, -- the number of words
@@ -173,8 +173,15 @@ main = do
   B.writeFile wordLstPath (B.intercalate (B.pack $ encode "\n") wordlst)
 
   -- draw Learning Curve
-  drawLearningCurve "Session6/charts/word2vec_150_LearningCurve.png" "Learning Curve" [("Training Loss", losses)]
+  drawLearningCurve "Session6/charts/word2vec_150_itr100_LearningCurve.png" "Learning Curve" [("Training Loss", losses)]
 
+    -- Save the model
+  saveParams trainedEmb modelPath
+
+  -- Load params
+  initWordEmb <- makeIndependent $ zeros' [1]
+  let initEmb = Embedding {wordEmbedding = initWordEmb}
+  loadedEmb <- loadParams initEmb modelPath
   return ()
   where
     optimizer = GD
