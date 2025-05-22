@@ -12,15 +12,15 @@ import qualified Data.ByteString.Lazy as B -- add bytestring to dependencies in 
 import Data.Word (Word8)
 import qualified Data.Map.Strict as M -- add containers to dependencies in package.yaml
 import Data.List (nub)
-import Control.Monad (when, foldM)
+import Control.Monad (when)
 
 import Torch.Autograd (makeIndependent, toDependent)
-import Torch.Functional (embedding', nllLoss', meanDim, matmul, transpose2D, softmax, logSoftmax, binaryCrossEntropyLoss', Dim (..), KeepDim (..))
-import Torch.NN (Parameterized (..), Parameter, Linear (..), LinearSpec (..), sample)
-import Torch.Serialize (saveParams, loadParams)
-import Torch.Tensor (Tensor, asTensor, asValue, shape)
-import Torch.TensorFactories (eye', zeros')
-import Torch.Optim (Optimizer, GD (..), runStep, foldLoop)
+import Torch.Functional (embedding', nllLoss', meanDim, matmul, transpose2D, logSoftmax, Dim (..), KeepDim (..))
+import Torch.NN (Parameterized (..), Parameter, Linear (..))
+import Torch.Serialize (saveParams)
+import Torch.Tensor (Tensor, asTensor, asValue)
+import Torch.TensorFactories (eye')
+import Torch.Optim (GD (..), runStep, foldLoop)
 import Torch.DType (DType(..))
 
 import ML.Exp.Chart (drawLearningCurve)
@@ -35,7 +35,7 @@ wordLstPath = "Session6/data/wordlst_150.txt"
 learningRate :: Float
 learningRate = 0.1
 numIters :: Int
-numIters = 100
+numIters = 50
 
 data EmbeddingSpec = EmbeddingSpec {
   wordNum :: Int, -- the number of words
@@ -177,11 +177,6 @@ main = do
 
     -- Save the model
   saveParams trainedEmb modelPath
-
-  -- Load params
-  initWordEmb <- makeIndependent $ zeros' [1]
-  let initEmb = Embedding {wordEmbedding = initWordEmb}
-  loadedEmb <- loadParams initEmb modelPath
   return ()
   where
     optimizer = GD
