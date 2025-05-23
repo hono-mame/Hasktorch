@@ -12,14 +12,14 @@
 
 advanced  
 - [ ] Calculating the meaning composition (word2vec)
-- [ ] Improve the model
+- [x] Improve the model
 - [ ] Make a survey on and implement “negative sampling”.
 - [ ] Make a survey on “subword tokenization algorithms”
 
 ### What to do next
 - [ ] Updating isUnncessaryChar
 - [ ] **Build a model with full data**
-- [ ] Implementing evaluation with STS
+- [ ] Implement evaluation with STS
 
 ## How to execute the code
 ```haskell
