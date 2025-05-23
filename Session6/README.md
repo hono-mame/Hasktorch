@@ -20,7 +20,6 @@ advanced
 - [ ] Updating isUnncessaryChar
 - [ ] **Build a model with full data**
 - [ ] Implementing evaluation with STS
-- [ ]
 
 ## How to execute the code
 ```haskell
