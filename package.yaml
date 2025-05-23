@@ -223,6 +223,27 @@ executables:
       - utf8-string
     other-modules: []
 
+  session6-word2vec-mini:
+    main: word2vec_mini.hs
+    source-dirs: Session6
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - base >= 4.7 && < 5
+      - Hasktorch
+      - hasktorch-tools
+      - hasktorch == 0.2.0.0
+      - cassava
+      - bytestring
+      - vector
+      - nlp-tools
+      - random
+      - containers
+      - utf8-string
+    other-modules: []
+
 tests:
   Hasktorch-test:
     main:                Spec.hs

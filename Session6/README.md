@@ -14,13 +14,21 @@ advanced
 - [ ] Calculating the meaning composition (word2vec)
 - [ ] Improve the model
 - [ ] Make a survey on and implement “negative sampling”.
-- [ ]Make a survey on “subword tokenization algorithms”
+- [ ] Make a survey on “subword tokenization algorithms”
 
+### What to do next
+- [ ] Updating isUnncessaryChar
+- [ ] **Build a model with full data**
+- [ ] Implementing evaluation with STS
+- [ ]
 
 ## How to execute the code
 ```haskell
 -- for training
 docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack run session6-word2vec"
+
+-- for training with mini-Batch
+docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack run session6-word2vec-mini"
 
 -- for evaluation
 docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack run session6-word2vec-eval"
@@ -31,10 +39,10 @@ I build a model with smaller data (150columns) for checking my implementation. I
 
 ![](charts/word2vec_150_itr100_LearningCurve.png)
 
-it takes a lot of time for training even with smaller data...
-(About 20 seconds per one iteration)
+it takes a lot of time for training even with smaller data...  
+**(About 20 seconds per one iteration)**
 
-## Evaluate my implementation
+## Evaluate my implementation (not with STS, pretty simple implementation...)
 
 **① if the two sentences are the same, cosine similarity should be 1.** 
 ``` haskell
@@ -87,3 +95,17 @@ Cosine similarity between the two sentences: 0.9298487
 **Need to try build model with larger data!!**
 
 ## Try to build a model with larger data
+**🌟Loading review-texts.txt takes so much time (more than 10 hours?!)**
+
+
+## Try to build a model with mini-Batch
+![](charts/word2vec_mini_itr300_LearningCurve.png)
+```haskell
+learningRate :: Float
+learningRate = 0.5
+numIters :: Int
+numIters = 300
+batchSize :: Int
+batchSize = 50
+```
+**It takes about 2 seconds per one iteration!!**
