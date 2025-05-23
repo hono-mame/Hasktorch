@@ -8,7 +8,7 @@
 - [ ] Evaluate the trained model using STS
     - [ ] Prepare data
     - [ ] Evaluate the model (cosine similarity)   
-- [x] Evaluate the model with two sentences and calculate similarity (did not use STS)
+- [x] Evaluate the model with two sentences and calculate similarity (without STS)
 
 advanced  
 - [ ] Calculating the meaning composition (word2vec)
@@ -41,7 +41,7 @@ I build a model with smaller data (150columns) for checking my implementation. I
 it takes a lot of time for training even with smaller data...  
 **(About 20 seconds per one iteration)**
 
-## Evaluate my implementation (not with STS, pretty simple implementation...)
+## Evaluate my implementation (without STS, pretty simple implementation...)
 
 **① if the two sentences are the same, cosine similarity should be 1.** 
 ``` haskell
