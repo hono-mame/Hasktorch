@@ -94,8 +94,71 @@ Cosine similarity between the two sentences: 0.9298487
 **Need to try build model with larger data!!**
 
 ## Try to build a model with larger data
-**🌟Loading review-texts.txt takes so much time (more than 10 hours?!)**
+**🌟Loading review-texts.txt takes so much time (more than 10 hours?!)**   
 
+**update: Tried with 2000 lines, and it took about a day!!**
+
+### training
+```
+-- Hyperparameters
+learningRate :: Float
+learningRate = 0.5
+numIters :: Int
+numIters = 300
+batchSize :: Int
+batchSize = 50
+```
+![](charts/word2vec_mini_2000_itr300_LearningCurve.png)
+
+### evaluation
+**① if the two sentences are the same, cosine similarity should be 1.** 
+``` haskell
+Sentence 1: Your first sentence here.
+Sentence 2: Your first sentence here.
+Vector representation of sentence 1: Tensor Float [9] [ 0.1066   , -5.2857e-2,  0.5741   ,  2.2641   ,  0.8787   , -0.1858   ,  0.2418   ,  0.3828   ,  0.8683   ]
+Vector representation of sentence 2: Tensor Float [9] [ 0.1066   , -5.2857e-2,  0.5741   ,  2.2641   ,  0.8787   , -0.1858   ,  0.2418   ,  0.3828   ,  0.8683   ]
+Cosine similarity between the two sentences: 1.0
+```
+
+**② Change only one word of the sentence (cosine similarity should be a little smaller than 1)**  
+```haskell
+Sentence 1: My first sentence here.
+Sentence 2: Your first sentence here.
+Vector representation of sentence 1: Tensor Float [9] [-9.0407e-2,  0.4153   ,  6.2485e-2,  2.3163   ,  1.6397   , -0.1591   ,  0.9851   ,  0.1052   ,  0.3386   ]
+Vector representation of sentence 2: Tensor Float [9] [ 0.1066   , -5.2857e-2,  0.5741   ,  2.2641   ,  0.8787   , -0.1858   ,  0.2418   ,  0.3828   ,  0.8683   ]
+Cosine similarity between the two sentences: 0.8860327
+```
+0.7906304 → 0.8860327 (seems better)   
+
+**③ Try with sentences whose score of STS is 1**     
+```haskell
+Sentence 1: You should do it
+Sentence 2: You can do it, too
+Vector representation of sentence 1: Tensor Float [9] [-1.0015   , -0.7386   ,  0.1223   ,  4.5560   , -0.2556   , -0.4472   , -0.4045   , -0.5726   , -0.1511   ]
+Vector representation of sentence 2: Tensor Float [9] [-0.5036   ,  7.2754e-2,  0.7905   ,  4.3181   , -0.2638   , -0.3690   , -1.4724e-2, -0.4303   , -0.1340   ]
+Cosine similarity between the two sentences: 0.9657118
+```
+0.90568423 → 0.9657118 (??)   
+
+**④ Try with sentences whose score of STS is 5**     
+```haskell
+Sentence 1: You can do it
+Sentence 2: You can do it, too
+Vector representation of sentence 1: Tensor Float [9] [-1.0457   , -0.5252   ,  0.2616   ,  4.6087   , -0.4242   , -0.7662   , -0.3321   , -0.5490   , -6.4082e-2]
+Vector representation of sentence 2: Tensor Float [9] [-0.5036   ,  7.2754e-2,  0.7905   ,  4.3181   , -0.2638   , -0.3690   , -1.4724e-2, -0.4303   , -0.1340   ]
+Cosine similarity between the two sentences: 0.9738003
+```
+0.96699435 → 0.9738003 (seems better)   
+
+**⑤ Try with longer sentences (score of STS is 2)**  
+```haskell
+Sentence 1: I am not sure this is the right site for the question.
+Sentence 2: I am not sure this question would have made much sense to the Romans themselves.
+Vector representation of sentence 1: Tensor Float [9] [-0.1159   ,  0.2990   , -0.2238   ,  3.8684   ,  0.8873   ,  0.1330   , -0.6098   ,  0.1255   ,  0.3811   ]
+Vector representation of sentence 2: Tensor Float [9] [ 0.1357   ,  1.5973e-2,  0.1134   ,  3.6288   ,  0.4735   ,  0.1503   , -0.4644   , -0.3892   , -0.2204   ]
+Cosine similarity between the two sentences: 0.96613985
+```
+0.9298487 → 0.96613985 (??)
 
 ## Try to build a model with mini-Batch
 ![](charts/word2vec_mini_itr300_LearningCurve.png)

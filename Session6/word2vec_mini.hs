@@ -28,9 +28,9 @@ import ML.Exp.Chart (drawLearningCurve)
 
 -- File paths
 textFilePath, modelPath, wordLstPath :: FilePath
-textFilePath = "Session6/data/review-texts_150.txt"
-modelPath =  "Session6/data/embedding_150.params"
-wordLstPath = "Session6/data/wordlst_150.txt"
+textFilePath = "Session6/data/review-texts_5000.txt"
+modelPath =  "Session6/data/embedding_5000.params"
+wordLstPath = "Session6/data/wordlst_5000.txt"
 
 -- Hyperparameters
 learningRate :: Float
@@ -87,14 +87,19 @@ chunk i ls = map (take i) (build (splitter ls))
 
 main :: IO ()
 main = do
+  putStrLn "Loading data..."
   texts <- B.readFile textFilePath
+  putStrLn "checkpoint 1"
   let wordLines = preprocess texts
-      wordlst = nub $ concat wordLines
-      wordToIndex = wordToIndexFactory wordlst
-      indexedData = map (map wordToIndex) wordLines
+  putStrLn "checkpoint 2"
+  let wordlst = nub $ concat wordLines
+  putStrLn "checkpoint 3"
+  let wordToIndex = wordToIndexFactory wordlst
+  putStrLn "checkpoint 4"
+  let indexedData = map (map wordToIndex) wordLines
 
-  putStrLn $ "Total words: " ++ show (length wordlst)
-  putStrLn $ "Indexed data example: " ++ show (take 5 indexedData)
+  --putStrLn $ "Total words: " ++ show (length wordlst)
+  --putStrLn $ "Indexed data example: " ++ show (take 5 indexedData)
 
   let allBatches = makeBatches 1 indexedData
       batchedData = chunk batchSize allBatches
@@ -124,7 +129,7 @@ main = do
     return (newState, losses ++ [avgEpochLoss])
 
   B.writeFile wordLstPath (B.intercalate (B.pack $ encode "\n") wordlst)
-  drawLearningCurve "Session6/charts/word2vec_mini_itr200_LearningCurve.png" "Learning Curve" [("Training Loss", losses)]
+  drawLearningCurve "Session6/charts/word2vec_mini_5000_itr300_LearningCurve.png" "Learning Curve" [("Training Loss", losses)]
   saveParams trainedEmb modelPath
   return ()
   where

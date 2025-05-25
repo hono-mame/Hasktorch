@@ -22,8 +22,8 @@ import Torch.DType (DType(..))
 
 -- File paths
 modelPath, wordLstPath :: FilePath
-modelPath =  "Session6/data/embedding_150.params"
-wordLstPath = "Session6/data/wordlst_150.txt" 
+modelPath =  "Session6/data/embedding_2000.params"
+wordLstPath = "Session6/data/wordlst_2000.txt" 
 
 data EmbeddingSpec = EmbeddingSpec {
   wordNum :: Int, -- the number of words
@@ -81,7 +81,7 @@ main = do
 
   -- test sentences
   let sentence1 = "I am not sure this is the right site for the question."
-  let sentence2 = "You are not sure this is the right site for the question."
+  let sentence2 = "I am not sure this question would have made much sense to the Romans themselves."
   putStrLn $ "Sentence 1: " ++ sentence1
   putStrLn $ "Sentence 2: " ++ sentence2
 
