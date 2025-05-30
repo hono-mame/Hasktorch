@@ -141,14 +141,15 @@ textToIndices wordList text =
 
 
 forward :: Model -> [Int] -> Tensor -> Int -> Int -> (Tensor, Tensor)
-forward Model{..} indices h0 wordDim _ =
+forward Model{..} indices h0 wordDim hiddenDim =
   let embTensor = embedding' (toDependent $ wordEmbedding emb) (asTensor indices)
       processedEmb = if null indices 
                      then zeros' [wordDim] 
                      else let avgEmb = meanDim (Dim 0) RemoveDim Float embTensor
                           in avgEmb
       finalHidden = rnnForward rnn processedEmb h0
-      outputTensor = linear output finalHidden
+      finalHidden2D = reshape [1, hiddenDim] finalHidden
+      outputTensor = linear output finalHidden2D
       logProbs = logSoftmax (Dim 0) outputTensor
   in (logProbs, finalHidden)
 
@@ -168,7 +169,8 @@ train model wordList reviews epochs wordDim hiddenDim = do
               targets = tail indices -- inputと1つずらす
               h0 = zeros' [hiddenDim]
               (outputs, _) = forward m inputs h0 wordDim hiddenDim
-              targetTensor = asTensor targets
+              targetTensor = asTensor ([head targets] :: [Int])
+              --targetTensor = asTensor targets
           putStrLn $ "target Tensor: " ++ show (shape targetTensor)
           putStrLn $ "outputs Tensor: " ++ show (shape outputs)
           let loss = nllLoss' outputs targetTensor

@@ -7,3 +7,7 @@ docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack r
 -- for parsing the input data
 docker-compose exec hasktorch /bin/bash -c "cd /home/ubuntu/Hasktorch && stack run session7-parser"
 ```
+still trying to fix the error:
+```haskell
+session7-rnn: Prelude.!!: index too large
+```
